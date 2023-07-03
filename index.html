@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sales Sampling</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <!-- <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/css/select2.min.css"> -->
+
+    <!-- popup -->
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>Sales Sampling</h1>
+    <form id="salesSampling">
+
+        <label for="name">Customer name:</label>
+        <input type="text" id="name" name="Customer Name" required>
+
+        <label for="streetAddress">Street address:</label>
+        <input type="text" id="streetAddress" name="streetAddress" required>
+
+        <label for="state">State:</label>
+        <select id="state" name="State" onchange="populateCities()">
+            <option value="">Choose State</option>
+            <option value="Punjab">Punjab</option>
+            <option value="Sindh">Sindh</option>
+            <option value="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa</option>
+            <option value="Balochistan">Balochistan</option>
+            <option value="Islamabad Capital Territory">Islamabad Capital Territory</option>
+            <option value="Gilgit-Baltistan (formerly known as the Northern Areas)">Gilgit-Baltistan (formerly known as
+                the Northern Areas)</option>
+            <option value="Azad Jammu and Kashmir">Azad Jammu and Kashmir</option>
+        </select>
+
+        <label for="city">City:</label>
+        <select id="city" name="City">
+            <option value="">Select a City</option>
+        </select>
+
+        <label for="phone">Phone:</label>
+        <input type="tel" id="phone" name="Phone" required pattern="[+][0-9]{12}" placeholder="+92xxxxxxxxxx">
+
+        <label for="Nearestlandmarks">Nearest landmarks:</label>
+        <input type="text" id="Nearestlandmarks" name="Nearest landmarks" required>
+
+        <label for="shopname">Shop Name:</label>
+        <input type="text" id="Shopname" name="Shop Name" required>
+        <!-- <label for="ppp">Price per pack:</label>
+        <input type="number" id="ppp" name="Price per pack" required min="0">
+
+        <label for="ppCTN">Price per CTN:</label>
+        <input type="number" id="ppCTN" name="Price per CTN" required min="0">
+
+        <label for="PaymentMethod">Payment method:</label>
+        <select id="paymentMethod" name="Payment Method">
+            <option value="">Select a Payment Method</option>
+            <option value="Cash">Cash</option>
+            <option value="Bank Account">Bank Account</option>
+            <option value="Credit Card">Credit Card</option>
+        </select>
+    -->
+
+
+        <label for="Remarks">Remarks:</label>
+        <input type="text" id="remarks" name="Remarks" required>
+
+        <label for="followupdate">Follow-up Date:</label>
+        <input type="date" id="followupdate" name="Follow-up Date" required min="0" pattern="[0-9]">
+
+        <!-- Location fetching -->
+        <div class="location">
+            <label for="latitude"></label>
+            <input type="text" id="latitude" name="latitude" placeholder="latitude" tabindex="-1" readonly>
+
+            <label for="longitude"></label>
+            <input type="text" id="longitude" name="longitude" placeholder="longitude" tabindex="-1" readonly>
+
+            <button type="button" onclick="fetchLocation()">Get Location</button>
+        </div>
+        <!-- End of Location fetching -->
+        <input type="submit" value="Submit">
+
+    </form>
+
+    <!-- spinner html -->
+    <div class="spinner-container">
+        <div class="spinner"></div>
+    </div>
+    <!-- end of spinner html -->
+
+    <!-- Add the modal HTML code -->
+    <div id="myModal" class="modal">
+        <span class="close">&times;</span>
+        <div class="modal-content">
+            <p id="modal-message"></p>
+            <button id="closeBtn">Close</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Copyright &copy; <a href="https://rafiqfarmfoods.com/" target="_blank"> Rafiq Farm Foods </a>| All Right
+            Reserved. </p>
+    </footer>
+    <!-- end of Footer -->
+
+
+    <!-- JavaScript -->
+    <script>
+        // City data based on selected state
+        const cityData = {
+            Punjab: ["Abdul Hakim",
+                "Ahmadpur East",
+                "Ahmedpur East",
+                "Arifwala",
+                "Attock",
+                "Attock Khurd",
+                "Bagu Na Mohra",
+                "Bahawalnagar",
+                "Bahawalpur",
+                "Basla",
+                "Bhakkar",
+                "Bhalwal",
+                "Bhawana",
+                "Burewala",
+                "Cantonment",
+                "Chakwal",
+                "Chauk Azam",
+                "Chenab Nagar",
+                "Chiniot",
+                "Chishtian",
+                "Chunian",
+                "Daska",
+                "Dera Ghazi Khan",
+                "Dipalpur",
+                "Faisalabad",
+                "Gojra",
+                "Gujranwala",
+                "Gujrat",
+                "Hafizabad",
+                "Harunabad",
+                "Hasilpur",
+                "Hassan Abdal",
+                "Hujra Shah Muqim",
+                "Jalalpur Jattan",
+                "Jaranwala",
+                "Jauharabad",
+                "Jhang",
+                "Jhang City",
+                "Jhelum",
+                "Kabirwala",
+                "Kahror Pakka",
+                "Kamalia",
+                "Kasur",
+                "Khanewal",
+                "Khanpur",
+                "Kharian",
+                "Khushab",
+                "Kot Addu",
+                "Kundian",
+                "Lahore",
+                "Lala Musa",
+                "Lalian",
+                "Layyah",
+                "Lodhran",
+                "Mandi Bahauddin",
+                "Mandi Burewala",
+                "Mian Channu",
+                "Mian Channun",
+                "Mianwali",
+                "Multan",
+                "Muridke",
+                "Murree",
+                "Muzaffargarh",
+                "Nankana Sahib",
+                "Narowal",
+                "Nurkot",
+                "Okara",
+                "Pakpattan",
+                "Pasrur",
+                "Pattoki",
+                "Qaboola",
+                "Rahim Yar Khan",
+                "Rahimyar Khan",
+                "Raiwind",
+                "Rajanpur",
+                "Rangewala",
+                "Rawalpindi",
+                "Saddiqabad",
+                "Sahiwal",
+                "Sambrial",
+                "Samundri",
+                "Sarai Alamgir",
+                "Sargodha",
+                "Shakargarh",
+                "Shekhupura",
+                "Shujaabad",
+                "Sialkot",
+                "Sialkot City",
+                "Talagang",
+                "Taxila",
+                "Toba Tek Singh",
+                "Vehari",
+                "Vihari",
+                "Wah Cantonment",
+                "Wahga",
+                "Zafarwal"],
+            Sindh: ["Badin",
+                "Bulri Shah Karim",
+                "Chuhar Jamali",
+                "Dadu",
+                "Darya Khan Marri",
+                "Daulatpur",
+                "Dokri",
+                "Ghotki",
+                "Goth Tando Sumro",
+                "Hala",
+                "Hyderabad",
+                "Hyderabad City",
+                "Jacobabad",
+                "Jamshoro",
+                "Kambar",
+                "Kandhkot",
+                "Kandiaro",
+                "Karachi",
+                "Kashmore",
+                "Kathri",
+                "Khairpur",
+                "Khairpur Mir",
+                "Kotri",
+                "Larkana",
+                "Matiari",
+                "Mian Sahib",
+                "Mirpur Bathoro",
+                "Mirpur Khas",
+                "Mithi",
+                "Moro",
+                "Naushahro Firoz",
+                "Nawabshah",
+                "Ratodero",
+                "Rohri",
+                "Sanghar",
+                "Sann",
+                "Sehwan",
+                "Shah Latif Town",
+                "Shahdadkot",
+                "Shikarpur",
+                "Sinjhor",
+                "Sita Road",
+                "Sujawal",
+                "Sukkur",
+                "Tando Allahyar",
+                "Tando Muhammad Khan",
+                "Thari Mirwah",
+                "Thatta",
+                "Umerkot"],
+            "Khyber Pakhtunkhwa": ["Abbottabad",
+                "Alpur",
+                "Baffa",
+                "Bahrain",
+                "Bannu",
+                "Bara",
+                "Bat Khela",
+                "Batgram",
+                "Batkhela",
+                "Buner",
+                "Charsadda",
+                "Chitral",
+                "Daggar",
+                "Darra Adam Khel",
+                "Dera Ismail Khan",
+                "Gadoon Amazai",
+                "Hangu",
+                "Haripur",
+                "Jamrud",
+                "Karak",
+                "Kohat",
+                "Kohistan",
+                "Kulachi",
+                "Lakki Marwat",
+                "Landi Kotal",
+                "Lower Dir",
+                "Malakand",
+                "Mansehra",
+                "Mardan",
+                "Masho Khel",
+                "Mingaora",
+                "Mingora",
+                "Nowshera",
+                "Parachinar",
+                "Peshawar",
+                "Risalpur",
+                "Risalpur Cantonment",
+                "Saidu Sharif",
+                "Shabqadar",
+                "Shangla",
+                "Swabi",
+                "Swat",
+                "Takht-i-Bahi",
+                "Tank",
+                "Timargara",
+                "Timergara",
+                "Upper Dir"],
+            Balochistan: ["Quetta",
+                "Gwadar",
+                "Turbat",
+                "Chaman",
+                "Sibi",
+                "Zhob",
+                "Pishin",
+                "Khuzdar",
+                "Hub",
+                "Dera Murad Jamali",
+                "Usta Muhammad",
+                "Nushki",
+                "Mastung",
+                "Kalat",
+                "Kharan",
+                "Panjgur",
+                "Washuk",
+                "Pasni",
+                "Awaran",
+                "Kech",
+                "Lasbela",
+                "Qila Saifullah",
+                "Ziarat",
+                "Loralai",
+                "Duki",
+                "Chagai",
+                "Qila Abdullah",
+                "Dalbandin",
+                "Harnai",
+                "Dera Bugti",
+                "Kohlu",
+                "Barkhan",
+                "Naseerabad",
+                "Jaffarabad",
+                "Sohbatpur"],
+            "Islamabad Capital Territory": ["Islamabad", "Murree"],
+            "Gilgit-Baltistan (formerly known as the Northern Areas)": ["Aliabad",
+                "Askole",
+                "Astore",
+                "Bunji",
+                "Chilas",
+                "Dainyor",
+                "Danyor",
+                "Darel",
+                "Gahkuch",
+                "Gakuch",
+                "Ganish",
+                "Ghanche",
+                "Ghizer",
+                "Gilgit",
+                "Gupis",
+                "Haramosh",
+                "Hundur",
+                "Hunza",
+                "Hussainabad",
+                "Jalalabad",
+                "Kargah",
+                "Karimabad",
+                "Khaplu",
+                "Kharmang",
+                "Nagar",
+                "Phander",
+                "Rattu",
+                "Rondu",
+                "Shigar",
+                "Skardu",
+                "Sust",
+                "Tangi",
+                "Thaleem",
+                "Tolti",
+                "Yasin Valley"],
+            "Azad Jammu and Kashmir": ["Muzaffarabad",
+                "Mirpur",
+                "Kotli",
+                "Bhimber",
+                "Rawalakot",
+                "Bagh",
+                "Pallandri",
+                "Hajira",
+                "Sudhanoti",
+                "Haveli",
+                "Athmuqam",
+                "Abbaspur",
+                "Forward Kahuta",
+                "Garhi Dupatta",
+                "Neelum",
+                "Hattian Bala",
+                "Charhoi",
+                "Chikar",
+                "Dhirkot",
+                "Sehnsa",
+                "Khui Ratta",
+                "Samahni",
+                "Khuiratta",
+                "Nakyal",
+                "Trarkhel",
+                "Mandol",
+                "Mirpur Mathelo",
+                "Mangla",
+                "New Mirpur",
+                "Chakswari",
+                "Naukot",
+                "Palandri",
+                "Palangi",
+                "Ponch",
+                "Rara",
+                "Samani",
+                "Sharda"
+            ]
+        };
+        function populateCities() {
+            const stateSelect = document.getElementById("state");
+            const citySelect = document.getElementById("city");
+            const selectedState = stateSelect.value;
+
+            // Clear existing options
+            citySelect.innerHTML = '<option value="">Select a City</option>';
+
+            // Populate with cities based on selected state
+            if (selectedState && cityData[selectedState]) {
+                const cities = cityData[selectedState];
+                for (const city of cities) {
+                    const option = document.createElement("option");
+                    option.value = city;
+                    option.text = city;
+                    citySelect.appendChild(option);
+                }
+            }
+        }
+
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwyiwRPGlSRy3hPqaR-0HCGTHPqAeaSauaZ6FJ9Ydfrdihcvtw7s7KDYTs7yR2KflWb/exec';
+        const form = document.getElementById("salesSampling");
+
+        // modal javascript
+        // Get the modal element, the close button, and the close button inside the modal
+        const modal = document.getElementById("myModal");
+        const closeBtn = document.querySelector(".close");
+        const modalCloseBtn = document.getElementById("closeBtn");
+
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            modal.style.display = "block";
+            fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+                .then(response => {
+                    hideSpinner(); // Hide the spinner
+                    document.getElementById("modal-message").textContent = 'Success!';
+                })
+                .catch(error => {
+                    hideSpinner(); // Hide the spinner
+                    document.getElementById("modal-message").textContent = 'Error! ' + error.message;
+                });
+        });
+        // Close the modal when the close button is clicked
+        closeBtn.addEventListener("click", () => {
+            modal.style.display = "none";
+        });
+        // Close the modal when the close button inside the modal is clicked
+        modalCloseBtn.addEventListener("click", () => {
+            modal.style.display = "none";
+        });
+
+    </script>
+
+    <!-- Location fetching javascript -->
+    <script>
+        function fetchLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+            } else {
+                alert("Geolocation is not supported by your browser.");
+            }
+        }
+
+        function successCallback(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+
+            document.getElementById('latitude').value = latitude;
+            document.getElementById('longitude').value = longitude;
+        }
+
+        function errorCallback(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("Location permission denied. Please enable location services.");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("Location information is unavailable.");
+                    break;
+                case error.TIMEOUT:
+                    alert("The request to get user location timed out.");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    alert("An unknown error occurred while getting the location.");
+                    break;
+            }
+
+        }
+    </script>
+    <!-- End of Location fetching javascript -->
+
+    <!-- reseting form after submitting -->
+    <script>
+        document.getElementById('salesSampling').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            // Get the form values
+            var resetingForm = document.getElementById('name').value;
+            var email = document.getElementById('streetAddress').value;
+            var email = document.getElementById('state').value;
+            var email = document.getElementById('city').value;
+            var email = document.getElementById('phone').value;
+            var email = document.getElementById('Nearestlandmarks').value;
+            var email = document.getElementById('Shopname').value;
+            var email = document.getElementById('remarks').value;
+            var email = document.getElementById('followupdate').value;
+            var email = document.getElementById('latitude').value;
+            var email = document.getElementById('longitude').value;
+
+            // Perform any additional validation or processing here
+
+
+
+            // Send the form data to the server (you can use AJAX or other techniques)
+
+            // Reset the form fields
+            document.getElementById('name').value = '';
+            document.getElementById('streetAddress').value = '';
+            document.getElementById('state').value = '';
+            document.getElementById('city').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('Nearestlandmarks').value = '';
+            document.getElementById('Shopname').value = '';
+            document.getElementById('remarks').value = '';
+            document.getElementById('followupdate').value = '';
+            document.getElementById('latitude').value = '';
+            document.getElementById('longitude').value = '';
+
+
+        });
+
+    </script>
+
+    <script>
+        // Function to show the spinner
+        function showSpinner() {
+            const spinnerContainer = document.querySelector(".spinner-container");
+            spinnerContainer.style.display = "flex";
+            modal.style.display = "none";
+        }
+
+        // Function to hide the spinner
+        function hideSpinner() {
+            const spinnerContainer = document.querySelector(".spinner-container");
+            spinnerContainer.style.display = "none";
+            modal.style.display = "block";
+        }
+
+        // Function to handle form submission
+        function handleSubmit(event) {
+            event.preventDefault();
+            showSpinner(); // Show the spinner
+
+
+        }
+
+        // Add event listener to form submit
+
+        form.addEventListener("submit", handleSubmit);
+    </script>
+
+    <!-- end of for reseting after submitting -->
+
+
+    <!-- end of spinner -->
+</body>
+
+</html>
