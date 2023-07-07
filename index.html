@@ -12,11 +12,16 @@
 </head>
 
 <body>
+    <div class="logo">
+        <img id="logoImg" src="/images/rff.png">
+    </div>
     <h1>Sales Sampling</h1>
+    <div id="line"></div>
     <form id="salesSampling">
 
         <label for="name">Customer name:</label>
-        <input type="text" id="name" name="Customer Name" required>
+        <input type="text" class="input" id="name" name="Customer Name" required pattern="^[A-Za-z\s]+$"
+            placeholder="Customer Name">
 
         <label for="streetAddress">Street address:</label>
         <input type="text" id="streetAddress" name="streetAddress" required>
@@ -40,27 +45,15 @@
         </select>
 
         <label for="phone">Phone:</label>
-        <input type="tel" id="phone" name="Phone" required pattern="[+][0-9]{12}" placeholder="+92xxxxxxxxxx">
+        <input type="tel" class="input" id="phone" name="Phone" required pattern="[+][0-9]{12}"
+            placeholder="+92xxxxxxxxxx">
 
         <label for="Nearestlandmarks">Nearest landmarks:</label>
         <input type="text" id="Nearestlandmarks" name="Nearest landmarks" required>
 
         <label for="shopname">Shop Name:</label>
         <input type="text" id="Shopname" name="Shop Name" required>
-        <!-- <label for="ppp">Price per pack:</label>
-        <input type="number" id="ppp" name="Price per pack" required min="0">
 
-        <label for="ppCTN">Price per CTN:</label>
-        <input type="number" id="ppCTN" name="Price per CTN" required min="0">
-
-        <label for="PaymentMethod">Payment method:</label>
-        <select id="paymentMethod" name="Payment Method">
-            <option value="">Select a Payment Method</option>
-            <option value="Cash">Cash</option>
-            <option value="Bank Account">Bank Account</option>
-            <option value="Credit Card">Credit Card</option>
-        </select>
-    -->
 
 
         <label for="Remarks">Remarks:</label>
@@ -72,10 +65,12 @@
         <!-- Location fetching -->
         <div class="location">
             <label for="latitude"></label>
-            <input type="text" id="latitude" name="latitude" placeholder="latitude" tabindex="-1" readonly>
+            <input type="text" class="locations" id="latitude" name="latitude" placeholder="latitude" tabindex="-1"
+                readonly>
 
             <label for="longitude"></label>
-            <input type="text" id="longitude" name="longitude" placeholder="longitude" tabindex="-1" readonly>
+            <input type="text" class="locations" id="longitude" name="longitude" placeholder="longitude" tabindex="-1"
+                readonly>
 
             <button type="button" onclick="fetchLocation()">Get Location</button>
         </div>
@@ -109,6 +104,21 @@
 
     <!-- JavaScript -->
     <script>
+        // input field validation
+        // Get all input fields with the 'input' class
+        const inputFields = document.querySelectorAll('.input');
+
+        // Add event listeners to toggle the 'placeholder-shown' class
+        inputFields.forEach((input) => {
+            input.addEventListener('input', function () {
+                if (this.value === '') {
+                    this.classList.add('placeholder-shown');
+                } else {
+                    this.classList.remove('placeholder-shown');
+                }
+            });
+        });
+
         // City data based on selected state
         const cityData = {
             Punjab: ["Abdul Hakim",
