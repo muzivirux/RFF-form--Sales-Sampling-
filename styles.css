@@ -419,4 +419,7 @@ spline-viewer {
   #locationBtn {
     font-size: 1rem;
   }
+  .container {
+    height: 4rem;
+  }
 }
