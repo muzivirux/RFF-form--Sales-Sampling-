@@ -4,17 +4,26 @@
 <head>
     <title>Sales Sampling</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
-    <!-- <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0/css/select2.min.css"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
-
+    <!-- animation cartoon -->
+    <script type="module" src="https://unpkg.com/@splinetool/viewer/build/spline-viewer.js"></script>
 </head>
 
 <body>
-    <div class="logo">
-        <img id="logoImg" src="/images/rff.png">
+    <!-- cartoon animation -->
+    <div class="spline-viewer-container">
+        <spline-viewer url="https://prod.spline.design/FVZWbQH2B6ndj9UU/scene.splinecode"
+            events-target="global"></spline-viewer>
     </div>
+
+    <div class="logo">
+        <a href="https://rafiqfarmfoods.com/" target="_blank">
+            <img id="logoImg" src="/images/rff.png">
+        </a>
+    </div>
+
+
     <h1>Sales Sampling</h1>
     <div id="line"></div>
     <form id="salesSampling">
@@ -44,6 +53,25 @@
             <option value="">Select a City</option>
         </select>
 
+        <div class="container">
+            <!-- <label for="varietyMsf">Variety (MSF):</label> -->
+            <select id="varietyMsf" name="Variety (MSF)">
+                <option value="">Select a Variety</option>
+                <option value="Alverstone Russet">Alverstone Russet</option>
+                <option value="Santana">Santana</option>
+                <option value="LR">LR</option>
+            </select>
+            <!-- <label for="CutSize">Cut Size (MSF):</label> -->
+            <select id="CutSize" name="Cut Size (MSF)">
+                <option value="">Select a Cut Size (MSF)</option>
+                <option value="6*6">6*6</option>
+                <option value="9*9">9*9</option>
+                <option value="12*12">12*12</option>
+            </select>
+
+
+        </div>
+
         <label for="phone">Phone:</label>
         <input type="tel" id="phone" name="Phone" required pattern="[+][0-9]{12}" placeholder="+92xxxxxxxxxx">
 
@@ -71,7 +99,7 @@
             <input type="text" class="locations" id="longitude" name="longitude" placeholder="longitude" tabindex="-1"
                 readonly>
 
-            <button type="button" onclick="fetchLocation()">Get Location</button>
+            <button type="button" id="locationBtn" onclick="fetchLocation()">Get Location</button>
         </div>
         <!-- End of Location fetching -->
         <input type="submit" value="Submit">
@@ -95,8 +123,8 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <p>Copyright &copy; <a href="https://rafiqfarmfoods.com/" target="_blank"> Rafiq Farm Foods </a>| All Right
-            Reserved. </p>
+        <p><a href="https://rafiqfarmfoods.com/" target="_blank">Copyright &copy; Rafiq Farm Foods | All Right
+                Reserved. </a></p>
     </footer>
     <!-- end of Footer -->
 
