@@ -36,7 +36,7 @@
         <input type="text" id="streetAddress" name="streetAddress" required>
 
         <label for="state">State:</label>
-        <select id="state" name="State" onchange="populateCities()">
+        <select id="state" name="State" onchange="populateCities()" required>
             <option value="">Choose State</option>
             <option value="Punjab">Punjab</option>
             <option value="Sindh">Sindh</option>
@@ -49,20 +49,20 @@
         </select>
 
         <label for="city">City:</label>
-        <select id="city" name="City">
+        <select id="city" name="City" required>
             <option value="">Select a City</option>
         </select>
 
         <div class="container">
             <!-- <label for="varietyMsf">Variety (MSF):</label> -->
-            <select id="varietyMsf" name="Variety (MSF)">
+            <select id="varietyMsf" name="Variety (MSF)" required>
                 <option value="">Select a Variety</option>
                 <option value="Alverstone Russet">Alverstone Russet</option>
                 <option value="Santana">Santana</option>
                 <option value="LR">LR</option>
             </select>
             <!-- <label for="CutSize">Cut Size (MSF):</label> -->
-            <select id="CutSize" name="Cut Size (MSF)">
+            <select id="CutSize" name="Cut Size (MSF)" required>
                 <option value="">Select a Cut Size (MSF)</option>
                 <option value="6*6">6*6</option>
                 <option value="9*9">9*9</option>
